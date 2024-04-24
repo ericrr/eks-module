@@ -86,4 +86,44 @@ resource "aws_eks_addon" "vpc_cni" {
   resolve_conflicts_on_update = "PRESERVE"
 
   depends_on = [ module.eks ]
+
+}
+
+resource "aws_ssm_parameter" "cluster_name" {
+  name        = "/${var.environment}/eks/${local.cluster_name.manager}/cluster_name"
+  description = "The parameter description EKS Cluster Name"
+  type        = "String"
+  value       = local.cluster_name.manager
+
+  tags = {
+    environment = "${var.environment}"
+    module = "eks"
+    cluster = "${local.cluster_name.manager}"
+  }
+}
+
+resource "aws_ssm_parameter" "cluster_endpoint" {
+  name        = "/${var.environment}/eks/${local.cluster_name.manager}/cluster_endpoint"
+  description = "The parameter description EKS Cluster Endpoint"
+  type        = "String"
+  value       = module.eks.cluster_endpoint
+
+  tags = {
+    environment = "${var.environment}"
+    module = "eks"
+    cluster = "${local.cluster_name.manager}"
+  }
+}
+
+resource "aws_ssm_parameter" "cluster_auth" {
+  name        = "/${var.environment}/eks/${local.cluster_name.manager}/cluster_authority"
+  description = "The parameter description EKS Cluster Authority"
+  type        = "String"
+  value       = base64decode(module.eks.cluster_certificate_authority_data)
+
+  tags = {
+    environment = "${var.environment}"
+    module = "eks"
+    cluster = "${local.cluster_name.manager}"
+  }
 }

@@ -30,6 +30,12 @@ variable "cluster_name" {
   description = "cluster name"
 }
 
+variable "environment" {
+  type = string
+  description = "environment use" 
+  default = "dev"
+}
+
 variable "lbcontroller" {
   type = map(any)
   default = {}
